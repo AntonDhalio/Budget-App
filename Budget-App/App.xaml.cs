@@ -1,4 +1,6 @@
-﻿namespace Budget_App
+﻿using Budget_App.Data;
+
+namespace Budget_App
 {
     public partial class App : Application
     {
@@ -7,6 +9,7 @@
             InitializeComponent();
 
             MainPage = new MainPage();
+
         }
     }
 }

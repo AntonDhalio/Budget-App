@@ -21,9 +21,8 @@ namespace Budget_App
 		builder.Services.AddBlazorWebViewDeveloperTools();
 		builder.Logging.AddDebug();
 #endif
-
-            builder.Services.AddSingleton<WeatherForecastService>();
-
+            builder.Services.AddSingleton<BudgetRepository>();
+            //builder.Services.AddDbContext<BudgetContext>();
             return builder.Build();
         }
     }

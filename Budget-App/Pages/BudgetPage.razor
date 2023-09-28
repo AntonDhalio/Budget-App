@@ -1,0 +1,58 @@
+@page "/budget"
+@using Budget_App.Components
+@inject Data.BudgetRepository BudgetRepository
+
+@{
+}
+
+
+<div>
+    <h1>Budget</h1>
+    @if (sections.Any())
+    {
+        foreach(var section in sections)
+        {
+            <Section SectionData="section" OnUpdateSection="UpdateSection" />
+        }
+    }
+    else
+    {
+        <p>Här ser det tomt ut! Starta med att skapa en kategori.</p>
+    }
+    
+    <form method="post" @onsubmit="AddSection">
+        <label for="name">Name:</label>
+        <input type="text" id="name" name="name" @bind="sectionName" />
+
+        <button type="submit">Add Section</button>
+    </form>
+</div>
+
+@code {
+    private string sectionName;
+    private IEnumerable<Models.Budget> items = Enumerable.Empty<Models.Budget>();
+    private IEnumerable<Models.Section> sections = Enumerable.Empty<Models.Section>();
+
+    protected override async Task OnInitializedAsync()
+    {
+        sections = await FetchSections();
+    }
+
+    private async Task AddSection()
+    {
+        string name = sectionName;
+        await Data.BudgetRepository.AddSection(name);
+        sectionName = "";
+        sections = await FetchSections();
+    }
+
+    private async Task UpdateSection()
+    {
+        sections = await FetchSections();
+    }
+
+    private async Task<IEnumerable<Models.Section>> FetchSections()
+    {
+        return await Data.BudgetRepository.GetAllSections(); 
+    }
+}
