@@ -1,0 +1,73 @@
+﻿<div class="wrapper">
+    <div class="section-head">
+        <h3>@SectionData.SectionName</h3>
+        @if (!items.Any())
+        {
+            <button class="oi oi-x" @onclick="RemoveSection"></button>
+        }
+    </div>
+    <div class="budget-items">
+        @if (items.Any())
+        {
+            foreach(var item in items)
+            {
+                <Item BudgetItem="item"/>
+            }
+        }
+    </div>
+    <div class="budget-add-item">
+        <form method="post" @onsubmit="AddItemToBudget">
+            <label for="name">Name:</label>
+            <input type="text" id="name" name="name" @bind="itemName" />
+            <input type="number" id="amount" name="amount" @bind="itemAmount" />
+            <label class="switch">
+                <input type="checkbox" id="shared" name="isShared" @bind="itemIsShared">
+                <span class="slider round"></span>
+            </label>
+
+            <button type="submit">Add Section</button>
+        </form>
+    </div>
+</div>
+
+@code {
+    [Parameter]
+    public Models.Section SectionData { get; set; }
+    [Parameter]
+    public EventCallback<Models.Section> OnUpdateSection { get; set; }
+    private IEnumerable<Models.Budget> items = Enumerable.Empty<Models.Budget>();
+    private string itemName;
+    private int itemAmount;
+    private bool itemIsShared;
+
+    protected override async Task OnInitializedAsync()
+    {
+        items = await FetchBudgetItems();
+    }
+
+    private async Task AddItemToBudget()
+    {
+        string name = itemName;
+        int amount = itemAmount;
+        int id = SectionData.Id;
+        bool isShared = itemIsShared;
+
+        await Data.BudgetRepository.AddBudgetItem(name, amount, isShared, id);
+
+        itemName = "";
+        itemAmount = 0;
+
+        items = await FetchBudgetItems();
+    }
+
+    private async Task RemoveSection()
+    {
+        await Data.BudgetRepository.RemoveSection(SectionData.Id);
+        await OnUpdateSection.InvokeAsync();
+    }
+
+    private async Task<IEnumerable<Models.Budget>> FetchBudgetItems()
+    {
+        return await Data.BudgetRepository.GetBudgetItems();
+    }
+}
