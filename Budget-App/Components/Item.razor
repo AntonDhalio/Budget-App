@@ -1,6 +1,16 @@
-﻿<h4>Item</h4>
+﻿<div class="item">
+    <div class="item-start">
+        <Icon IconClass="@BudgetItem.IconName"/>
+        <h4>@BudgetItem.Name</h4>
+    </div>
+    <div class="item-content">
+        <div class="item-sum">@BudgetItem.Amount</div>
+        <div class="item-shared">@BudgetItem.IsShared</div>
+    </div>
+</div>
+
 
 @code {
     [Parameter]
-    public Models.Budget BudgetItem { get; set; }
+    public Budget BudgetItem { get; set; }
 }

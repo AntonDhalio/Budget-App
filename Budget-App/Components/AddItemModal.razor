@@ -1,0 +1,129 @@
+﻿@inject IJSRuntime JSRuntime
+
+<div class="modal" style="display: @(IsVisible ? "block" : "none")">
+    <div class="modal-content">
+        <div class="modal-top">
+            <h2>Add budget item</h2>
+            <span class="close" @onclick="CloseModal">&times;</span>
+        </div>
+        
+        <div class="form-body">
+            <EditForm Model=@BudgetItem OnValidSubmit="AddItemToBudget">
+            <DataAnnotationsValidator />
+                <div class="form-floating mb-3">
+                    <InputText class="form-control" id="name" name="name" placeholder="Doggy daycare" @bind-Value=BudgetItem.Name />
+                    <label for="name">Name</label>
+                    <ValidationMessage For="() => BudgetItem.Name" />
+                </div>
+                <div class="form-floating mb-3">
+                    <InputNumber class="form-control" id="amount" name="amount" placeholder="3000" @bind-Value=BudgetItem.Amount />
+                    <label for="number">Amount</label>
+                    <ValidationMessage For="() => BudgetItem.Amount" />
+                </div>
+                <div class="form-floating mb-3">
+                    <div class="btn-group" role="group" aria-label="Type selection">
+                        <InputRadioGroup id="type" name="type" @bind-Value=BudgetItem.Type>
+                            @foreach (var type in Types)
+                            {
+                                <InputRadio class="btn-check" Value=type id=@($"type-{type}-{SectionId}") />
+                                <label class="btn btn-outline-secondary" for=@($"type-{type}-{SectionId}")>@type</label>
+                            }
+                        </InputRadioGroup>
+                    </div>
+                </div>
+                <div class="form-floating mb-3">
+                    <div class="btn-group" role="group" aria-label="Type selection">
+                        <InputRadioGroup id="shared" name="shared" @bind-Value=BudgetItem.IsShared>     
+                            <InputRadio class="btn-check" Value=false id=@($"isNotShared-{SectionId}") />
+                            <label class="btn btn-outline-secondary" for=@($"isNotShared-{SectionId}")>Personal</label>
+                            <InputRadio class="btn-check" Value=true id=@($"isShared-{SectionId}") />
+                            <label class="btn btn-outline-secondary" for=@($"isShared-{SectionId}")>Shared</label>                          
+                        </InputRadioGroup>
+                    </div>
+                </div>
+                <div class="form-floating mb-3">
+                    <div class="icon-picker">
+                        <div class="displayed-icon" @onclick="CloseButtonPicker">
+                            <Icon IconClass="@BudgetItem.IconClass" />
+                        </div>
+                        <div class="icon-clicker">
+                            <IconSelector IconWindowName="@IconWindowName" OnIconSelected="SetIcon" />
+                        </div>
+                    </div>
+                </div>
+                <div class="form-row">
+                    <button class="btn btn-success" type="submit">
+                        <span class="oi oi-plus"></span>
+                        <span>Add item</span>
+                        </button>
+                </div>
+        </EditForm>
+        </div>
+    </div>
+</div>
+
+@code{
+    [Parameter] 
+    public bool IsVisible { get; set; }
+    [Parameter] 
+    public EventCallback<bool> IsVisibleChanged { get; set; }
+    [Parameter] 
+    public int SectionId { get; set; }
+    [Parameter]
+    public EventCallback OnModalFinish { get; set; }
+    public EventCallback<string> IconSelected { get; set; }
+    private bool collapseButtonPicker = true;
+    private string IconWindowName => collapseButtonPicker ? "icon-window-inactive" : "icon-window-active";
+    public enum BudgetType
+    {
+        Income,
+        Expense
+    }
+    BudgetItem BudgetItem = new BudgetItem
+    {
+            Type = BudgetType.Income.ToString(),
+            IconClass = "fa-solid fa-icons"
+    };
+    List<String> Types = new List<string> { BudgetType.Income.ToString(), BudgetType.Expense.ToString() };
+
+    private void CloseModal()
+    {
+        IsVisible = false;
+        IsVisibleChanged.InvokeAsync(false);
+        JSRuntime.InvokeVoidAsync("toggleBodyScrolling", true);
+    }
+
+    private void CloseButtonPicker()
+    {
+        collapseButtonPicker = !collapseButtonPicker;
+    }
+
+    private async Task SetIcon(string iconClass)
+    {
+        BudgetItem.IconClass = iconClass;
+        CloseButtonPicker();
+        await IconSelected.InvokeAsync(iconClass);
+    }
+
+    private async Task AddItemToBudget()
+    {
+            string name = BudgetItem.Name;
+            int amount = BudgetItem.Amount;
+            int id = SectionId;
+            bool isShared = BudgetItem.IsShared;
+            string type = BudgetItem.Type;
+            string IconName = BudgetItem.IconClass;
+
+            await BudgetRepository.AddBudgetItem(name, amount, isShared, type, IconName, id);
+
+            BudgetItem.Name = "";
+            BudgetItem.Amount = 0;
+            BudgetItem.IsShared = false; 
+            BudgetItem.Type = BudgetType.Income.ToString();
+            BudgetItem.IconClass = "fa-solid fa-icons";
+
+            await OnModalFinish.InvokeAsync();
+            CloseModal();
+    }
+}
+

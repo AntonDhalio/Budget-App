@@ -1,0 +1,16 @@
+﻿<div class="@IconWindowName">
+    <div class="icon-grid">
+            @foreach (var iconClass in Icons)
+            {
+                 <Icon IconClass="@iconClass" OnIconSelected="OnIconSelected"/>
+            }
+    </div>
+</div>
+
+@code {
+    [Parameter] 
+    public EventCallback<string> OnIconSelected { get; set; }
+    [Parameter]
+    public string IconWindowName { get; set; }
+    private List<string> Icons = IconList.Icons;
+}

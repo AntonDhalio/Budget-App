@@ -1,2 +1,23 @@
-﻿body {
+﻿.section-item{
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-bottom: 1em;
+}
+
+.collapse-button {
+    display: flex;
+    justify-content: center;
+}
+
+.slide-down {
+    max-height: 500px;
+    transition: max-height 0.5s ease-in-out;
+    overflow: hidden;
+}
+
+.slide-up {
+    max-height: 0;
+    transition: max-height 0.3s ease-out;
+    overflow: hidden;
 }

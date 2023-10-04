@@ -1,4 +1,6 @@
-﻿<div class="wrapper">
+﻿@inject IJSRuntime JSRuntime
+
+<div class="wrapper">
     <div class="section-head">
         <h3>@SectionData.SectionName</h3>
         @if (!items.Any())
@@ -16,18 +18,22 @@
         }
     </div>
     <div class="budget-add-item">
-        <form method="post" @onsubmit="AddItemToBudget">
-            <label for="name">Name:</label>
-            <input type="text" id="name" name="name" @bind="itemName" />
-            <input type="number" id="amount" name="amount" @bind="itemAmount" />
-            <label class="switch">
-                <input type="checkbox" id="shared" name="isShared" @bind="itemIsShared">
-                <span class="slider round"></span>
-            </label>
-
-            <button type="submit">Add Section</button>
-        </form>
+        <button class="btn btn-outline-success" type="button" @onclick="ShowModal">
+            <span class="oi oi-plus"></span>
+            <span>Add Item</span>
+        </button>
+        <AddItemModal SectionId="SectionData.Id" OnModalFinish="UpdateBudgetItems" @ref="modal" @bind-IsVisible="modalVisible" />
     </div>
+    <script>
+        function toggleBodyScrolling(enableScroll) {
+            const body = document.body;
+            if (enableScroll) {
+                body.style.overflow = 'auto';
+            } else {
+                body.style.overflow = 'hidden';
+            }
+        }
+    </script>
 </div>
 
 @code {
@@ -36,38 +42,35 @@
     [Parameter]
     public EventCallback<Models.Section> OnUpdateSection { get; set; }
     private IEnumerable<Models.Budget> items = Enumerable.Empty<Models.Budget>();
-    private string itemName;
-    private int itemAmount;
-    private bool itemIsShared;
+    private bool modalVisible = false;
+    private AddItemModal modal;
+
+    private void ShowModal()
+    {
+        modalVisible = true;
+        JSRuntime.InvokeVoidAsync("toggleBodyScrolling", false);
+    }
 
     protected override async Task OnInitializedAsync()
     {
         items = await FetchBudgetItems();
     }
 
-    private async Task AddItemToBudget()
-    {
-        string name = itemName;
-        int amount = itemAmount;
-        int id = SectionData.Id;
-        bool isShared = itemIsShared;
-
-        await Data.BudgetRepository.AddBudgetItem(name, amount, isShared, id);
-
-        itemName = "";
-        itemAmount = 0;
-
-        items = await FetchBudgetItems();
-    }
-
     private async Task RemoveSection()
     {
-        await Data.BudgetRepository.RemoveSection(SectionData.Id);
+        await BudgetRepository.RemoveSection(SectionData.Id);
         await OnUpdateSection.InvokeAsync();
+    }
+
+    private async Task UpdateBudgetItems()
+    {
+        items = await FetchBudgetItems();
     }
 
     private async Task<IEnumerable<Models.Budget>> FetchBudgetItems()
     {
-        return await Data.BudgetRepository.GetBudgetItems();
+        var allItems = await BudgetRepository.GetBudgetItems();
+        var filteredItems = allItems.Where(item => item.SectionId == SectionData.Id);
+        return filteredItems;
     }
 }

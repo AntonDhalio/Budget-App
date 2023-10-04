@@ -12,25 +12,34 @@
     {
         foreach(var section in sections)
         {
-            <Section SectionData="section" OnUpdateSection="UpdateSection" />
+            <div class="section-item">
+                <Section SectionData="section" OnUpdateSection="UpdateSection" />
+            </div>
         }
     }
     else
     {
-        <p>Här ser det tomt ut! Starta med att skapa en kategori.</p>
+        <p>Sure looks empty here! Maybe you should add a Section?</p>
     }
-    
-    <form method="post" @onsubmit="AddSection">
-        <label for="name">Name:</label>
-        <input type="text" id="name" name="name" @bind="sectionName" />
+    <div class="collapse-button">
+        <button class="btn btn-primary" type="button" @onclick="ToggleAddSection" aria-expanded=" false" aria-controls="Add section collapse">
+            <span class="@AddSectionButton"></span>
+            <span>Add New Section</span>
+        </button>
+    </div>
+    <div class="@AddSectionCollapse" @onclick="ToggleAddSection" aria-hidden="@collapseAddSection">
+        <form method="post" @onsubmit="AddSection">
+            <label for="name">Name:</label>
+            <input type="text" id="name" name="name" @bind="sectionName" />
 
-        <button type="submit">Add Section</button>
-    </form>
+            <button type="submit">Add Section</button>
+        </form>
+    </div>
 </div>
 
 @code {
     private string sectionName;
-    private IEnumerable<Models.Budget> items = Enumerable.Empty<Models.Budget>();
+    private IEnumerable<Budget> items = Enumerable.Empty<Budget>();
     private IEnumerable<Models.Section> sections = Enumerable.Empty<Models.Section>();
 
     protected override async Task OnInitializedAsync()
@@ -41,7 +50,7 @@
     private async Task AddSection()
     {
         string name = sectionName;
-        await Data.BudgetRepository.AddSection(name);
+        await BudgetRepository.AddSection(name);
         sectionName = "";
         sections = await FetchSections();
     }
@@ -53,6 +62,15 @@
 
     private async Task<IEnumerable<Models.Section>> FetchSections()
     {
-        return await Data.BudgetRepository.GetAllSections(); 
+        return await BudgetRepository.GetAllSections(); 
+    }
+
+    private bool collapseAddSection = true;
+
+    private string AddSectionCollapse => collapseAddSection ? "slide-up" : "slide-down";
+    private string AddSectionButton => collapseAddSection ? "oi oi-chevron-bottom" : "oi oi-chevron-top";
+    private void ToggleAddSection()
+    {
+        collapseAddSection = !collapseAddSection;
     }
 }
