@@ -1,0 +1,36 @@
+﻿.item{
+    display: flex;
+    margin-bottom: 1em;
+}
+
+.item-start {
+    display: flex;
+    flex-direction: row;
+    width: 50%;
+    justify-content: flex-start;
+    align-items: flex-end;
+}
+
+.item-content {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-around;
+    align-items: center;
+    width: 50%;
+}
+
+.item-sum{
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-start;
+    align-items: center;
+    width: 50%;
+}
+
+.item-shared{ 
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-start;
+    align-items: center;
+    width: 50%;
+}

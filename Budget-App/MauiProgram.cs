@@ -22,7 +22,6 @@ namespace Budget_App
 		builder.Logging.AddDebug();
 #endif
             builder.Services.AddSingleton<BudgetRepository>();
-            //builder.Services.AddDbContext<BudgetContext>();
             return builder.Build();
         }
     }

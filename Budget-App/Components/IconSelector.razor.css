@@ -1,0 +1,41 @@
+﻿.icon-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(60px, 1fr));
+    grid-gap: 10px;
+    margin: 10px;
+    justify-items: center;
+}
+
+.icon-window-active {
+    border-radius: 5px;
+    max-height: 200px;
+    max-width: 100%;
+    overflow-x: hidden;
+    background-color: lightgray;
+    transition: max-height 0.5s, max-width 0.5s ease-in-out;
+}
+.icon-window-inactive {
+    max-height: 0;
+    max-width: 0;
+    transition: max-height 0.5s, max-width 0.5s ease-in-out;
+    overflow: hidden;
+}
+/* width */
+::-webkit-scrollbar {
+    width: 5px;
+}
+
+/* Track */
+::-webkit-scrollbar-track {
+    background: #f1f1f1;
+}
+
+/* Handle */
+::-webkit-scrollbar-thumb {
+    background: #888;
+}
+
+    /* Handle on hover */
+    ::-webkit-scrollbar-thumb:hover {
+        background: #555;
+    }
