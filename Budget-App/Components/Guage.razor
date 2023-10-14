@@ -1,0 +1,51 @@
+﻿@using IgniteUI.Blazor.Controls
+<div class="guage-percentage">
+    <h2>@Value%</h2>
+</div>
+<IgbLinearGauge Height="80px" Width="100%"
+    MinimumValue="0" Value="Value"
+    MaximumValue="100" Interval="20"
+    LabelInterval="20" LabelExtent="0.0"
+    IsNeedleDraggingEnabled="true"
+    NeedleShape="LinearGraphNeedleShape.Triangle"
+    NeedleBrush="#79797a"
+    NeedleOutline="#ffffffff"
+    NeedleStrokeThickness="1"
+    NeedleBreadth="15"
+    NeedleInnerExtent="0.3"
+    NeedleOuterExtent="0.9"
+    NeedleOuterPointExtent="0.8"
+    NeedleInnerPointExtent="0.325"
+    NeedleInnerPointWidth="0"
+    NeedleOuterPointWidth="0.3"
+    NeedleInnerBaseWidth="0"
+    NeedleOuterBaseWidth="0.07"
+    MinorTickBrush="4"
+    MinorTickStartExtent="0.2"
+    MinorTickEndExtent="0.1"
+    MinorTickStrokeThickness="1"
+    TickBrush="#79797a"
+    TickStartExtent="0.25"
+    TickEndExtent="0.05"
+    TickStrokeThickness="2"
+    ScaleBrush="#ffffff"
+    ScaleOutline="#dbdbdb"
+    ScaleStrokeThickness="0"
+    ScaleInnerExtent="0.075"
+    ScaleOuterExtent="0.85"
+    ScaleStartExtent="0.05"
+    ScaleEndExtent="0.95"
+    BackingBrush="#ffffff"
+    BackingOutline="#d1d1d1"
+    BackingStrokeThickness="0"
+    ValueChanged="OnValueChanged">
+</IgbLinearGauge>
+@code {
+    private int Value { get; set; }
+
+    private void OnValueChanged(IgbDoubleValueChangedEventArgs e)
+    {
+        Value = (int)e.NewValue;
+        StateHasChanged();
+    }
+}

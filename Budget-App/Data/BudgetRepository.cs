@@ -37,18 +37,41 @@ namespace Budget_App.Data
             await Init();
             await db.DeleteAsync<Budget>(id);
         }
-        public static async Task<IEnumerable<Budget>> GetBudgetItems()
+        public static async Task<IEnumerable<Budget>> GetAllBudgetItems()
         {
             await Init();
             var budget = await db.Table<Budget>().ToListAsync();
             return budget;
+        } 
+        public static async Task<IEnumerable<Budget>> GetBudgetItemsBySection(int section)
+        {
+            await Init();
+            var budget = await db.Table<Budget>().ToListAsync();
+            var items = budget.Where(item => item.SectionId == section);
+            return items;
         }
-        public static async Task AddSection(string sectionName)
+
+        public static async Task<IEnumerable<Budget>> GetIncomeBudgetItems()
+        {
+            await Init();
+            var budget = await db.Table<Budget>().ToListAsync();
+            var incomeItems = budget.Where(item => item.Type == "Income");
+            return incomeItems;
+        }
+        public static async Task<IEnumerable<Budget>> GetExpenseBudgetItems()
+        {
+            await Init();
+            var budget = await db.Table<Budget>().ToListAsync();
+            var expenseItems = budget.Where(item => item.Type == "Expense");
+            return expenseItems;
+        }
+        public static async Task AddSection(string sectionName, string colorCode)
         {
             await Init();
             var item = new Section
             {
                 SectionName = sectionName,
+                SectionColor = colorCode
             };
 
             await db.InsertAsync(item);

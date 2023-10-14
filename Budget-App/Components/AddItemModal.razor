@@ -25,8 +25,8 @@
                         <InputRadioGroup id="type" name="type" @bind-Value=BudgetItem.Type>
                             @foreach (var type in Types)
                             {
-                                <InputRadio class="btn-check" Value=type id=@($"type-{type}-{SectionId}") />
-                                <label class="btn btn-outline-secondary" for=@($"type-{type}-{SectionId}")>@type</label>
+                                <InputRadio class="btn-check" Value=type id=@($"type-{type}-{SectionData.Id}") />
+                                <label class="btn btn-outline-secondary" for=@($"type-{type}-{SectionData.Id}")>@type</label>
                             }
                         </InputRadioGroup>
                     </div>
@@ -34,20 +34,20 @@
                 <div class="form-floating mb-3">
                     <div class="btn-group" role="group" aria-label="Type selection">
                         <InputRadioGroup id="shared" name="shared" @bind-Value=BudgetItem.IsShared>     
-                            <InputRadio class="btn-check" Value=false id=@($"isNotShared-{SectionId}") />
-                            <label class="btn btn-outline-secondary" for=@($"isNotShared-{SectionId}")>Personal</label>
-                            <InputRadio class="btn-check" Value=true id=@($"isShared-{SectionId}") />
-                            <label class="btn btn-outline-secondary" for=@($"isShared-{SectionId}")>Shared</label>                          
+                            <InputRadio class="btn-check" Value=false id=@($"isNotShared-{SectionData.Id}") />
+                            <label class="btn btn-outline-secondary" for=@($"isNotShared-{SectionData.Id}")>Personal</label>
+                            <InputRadio class="btn-check" Value=true id=@($"isShared-{SectionData.Id}") />
+                            <label class="btn btn-outline-secondary" for=@($"isShared-{SectionData.Id}")>Shared</label>                          
                         </InputRadioGroup>
                     </div>
                 </div>
                 <div class="form-floating mb-3">
                     <div class="icon-picker">
                         <div class="displayed-icon" @onclick="CloseButtonPicker">
-                            <Icon IconClass="@BudgetItem.IconClass" />
+                            <Icon IconClass="@BudgetItem.IconClass" IconColor="@SectionData.SectionColor"/>
                         </div>
                         <div class="icon-clicker">
-                            <IconSelector IconWindowName="@IconWindowName" OnIconSelected="SetIcon" />
+                            <IconSelector IconWindowName="@IconWindowName" OnIconSelected="SetIcon" IconColor="@SectionData.SectionColor" />
                         </div>
                     </div>
                 </div>
@@ -67,8 +67,8 @@
     public bool IsVisible { get; set; }
     [Parameter] 
     public EventCallback<bool> IsVisibleChanged { get; set; }
-    [Parameter] 
-    public int SectionId { get; set; }
+    [Parameter]
+    public Models.Section SectionData { get; set; }
     [Parameter]
     public EventCallback OnModalFinish { get; set; }
     public EventCallback<string> IconSelected { get; set; }
@@ -109,7 +109,7 @@
     {
             string name = BudgetItem.Name;
             int amount = BudgetItem.Amount;
-            int id = SectionId;
+            int id = SectionData.Id;
             bool isShared = BudgetItem.IsShared;
             string type = BudgetItem.Type;
             string IconName = BudgetItem.IconClass;

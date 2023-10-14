@@ -51,14 +51,17 @@
 
     <ItemGroup>
       <None Remove="Components\AddItemModal.razor.css" />
+      <None Remove="Components\BudgetSummary.razor.css" />
     </ItemGroup>
 
     <ItemGroup>
       <Content Include="Components\AddItemModal.razor.css" />
+      <Content Include="Components\BudgetSummary.razor.css" />
     </ItemGroup>
 
     <ItemGroup>
         <PackageReference Include="FontAwesome" Version="4.7.0" />
+        <PackageReference Include="IgniteUI.Blazor.Trial" Version="23.1.72" />
         <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="7.0.11" />
         <PackageReference Include="Microsoft.Extensions.Logging.Debug" Version="7.0.0" />
         <PackageReference Include="sqlite-net" Version="1.6.292" />

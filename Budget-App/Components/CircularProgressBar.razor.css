@@ -1,0 +1,10 @@
+﻿.progress-circle {
+    width: 300px;
+    display: flex;
+    align-items: center;
+    margin-top: 30px;
+    justify-content: center;
+    transform: rotate(0.5turn);
+}
+
+

@@ -12,6 +12,7 @@ namespace Budget_App.Models
         [PrimaryKey, AutoIncrement]
         public int Id { get; set; }
         public string SectionName { get; set; }
+        public string SectionColor { get; set; }
       
     }
 }

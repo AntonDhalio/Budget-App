@@ -6,9 +6,13 @@
 .item-start {
     display: flex;
     flex-direction: row;
-    width: 50%;
+    width: 60%;
     justify-content: flex-start;
-    align-items: flex-end;
+    align-items: center;
+}
+
+.item-title{
+    font-size: larger;
 }
 
 .item-content {
@@ -16,13 +20,13 @@
     flex-direction: row;
     justify-content: space-around;
     align-items: center;
-    width: 50%;
+    width: 40%;
 }
 
 .item-sum{
     display: flex;
     flex-direction: row;
-    justify-content: flex-start;
+    justify-content: flex-end;
     align-items: center;
     width: 50%;
 }
@@ -30,7 +34,7 @@
 .item-shared{ 
     display: flex;
     flex-direction: row;
-    justify-content: flex-start;
+    justify-content: flex-end;
     align-items: center;
     width: 50%;
 }

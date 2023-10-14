@@ -1,0 +1,59 @@
+﻿<style>
+    #circularProgress {
+        --diameter: 100px;
+        --stroke-thickness: 10px;
+    }
+    igc-circular-progress::part(label) {
+        transform: rotate(0.5turn) translate(50%, 50%);
+    }
+</style>
+    
+
+
+<div class="progress-circle">
+    @if (IsPositive)
+    {
+        <IgbCircularProgress id="circularProgress" Max=100 Value=Value></IgbCircularProgress>
+    }
+    else
+    {
+        <IgbCircularProgress id="circularProgress" Max=100  Value=Value>
+            <IgbCircularGradient slot="gradient" Offset="0%" Color="#e00e07" />
+            <IgbCircularGradient slot="gradient" Offset="100%" Color="#fcba03" />
+        </IgbCircularProgress>
+    }
+</div>
+
+@code {
+    [Parameter]
+    public IEnumerable<Budget> IncomeData { get; set; }
+    [Parameter]
+    public IEnumerable<Budget> ExpenseData { get; set; }
+    [Parameter]
+    public IEnumerable<Models.Section> SectionData { get; set; }
+    private double Value { get; set; }
+    private bool IsPositive { get; set; }
+
+    protected override void OnInitialized()
+    {
+        CalculateRemainingIncome();
+    }
+
+    private void CalculateRemainingIncome()
+    {
+        int income = IncomeData.Sum(x => x.Amount);
+        int expense = ExpenseData.Sum(x => x.Amount);
+        int remaining = income - expense;
+        double percentage = ((double)remaining / income * 100);
+        if(percentage < 0)
+        {
+            IsPositive = false;
+            Value = Math.Abs(percentage);
+        }
+        else
+        {
+            IsPositive = true;
+            Value = percentage;
+        }
+    }
+}
