@@ -25,7 +25,5 @@
     padding: 0 1em 0 1em;
 }
 .budget-add-item{
-    display: flex;
-    justify-content: center;
-    padding-bottom: 1em;
+    padding-bottom: 0.5em;
 }

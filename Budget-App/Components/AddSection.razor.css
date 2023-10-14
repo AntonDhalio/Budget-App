@@ -2,3 +2,37 @@
     display: flex;
     flex-direction: row;
 }
+.add-section-wrapper {
+    padding: 1em;
+    width: 100%;
+    background-color: #f7f7f7;
+    box-shadow: -5px 5px 5px gray;
+    border: solid;
+    border-color: darkgray;
+    border-radius: 5px;
+    border-width: 2px;
+    margin-bottom: 2rem;
+}
+.collapse-button {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 1rem;
+}
+
+.slide-down {
+    max-height: 500px;
+    transition: max-height 0.5s ease-in-out;
+    display: flex;
+    justify-content: center;
+    overflow: hidden;
+}
+
+.slide-up {
+    max-height: 0;
+    transition: max-height 0.3s ease-out;
+    overflow: hidden;
+}
+.button-row{
+    display: flex;
+    justify-content: center;
+}

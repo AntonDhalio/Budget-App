@@ -1,7 +1,63 @@
 ﻿@page "/"
+@inject Data.BudgetRepository BudgetRepository
 
-<h1>Hello, world!</h1>
+<div>
+    Total income: @CalculateTotalIncome()
+</div>
+<div>
+    Total expenses: @CalculateTotalExpenses()
+</div>
+@if (dataIsLoaded)
+{
+    <RadialGuage SectionData="sections" IncomeData="incomeItems" ExpenseData="expenseItems"/>
+}
+else
+{
+    <p>Loading...</p>
+}
+<br />
+<Guage />
 
-Welcome to your new app.
+@code{
+    private IEnumerable<Budget> incomeItems = Enumerable.Empty<Budget>();
+    private IEnumerable<Budget> expenseItems = Enumerable.Empty<Budget>();
+    private IEnumerable<Models.Section> sections = Enumerable.Empty<Models.Section>();
 
-<SurveyPrompt Title="How is Blazor working for you?" />
+    private bool dataIsLoaded = false;
+
+    protected override async Task OnInitializedAsync()
+    {
+        incomeItems = await FetchBudgetIncome();
+        expenseItems = await FetchBudgetExpenses();
+        sections = await FetchSections();
+
+        dataIsLoaded = true;
+    }
+
+    private async Task<IEnumerable<Models.Section>> FetchSections()
+    {
+        return await BudgetRepository.GetAllSections();
+    }
+
+    private async Task<IEnumerable<Models.Budget>> FetchBudgetIncome()
+    {
+        var incomeItems = await BudgetRepository.GetIncomeBudgetItems();
+        return incomeItems;
+    }
+
+    private async Task<IEnumerable<Models.Budget>> FetchBudgetExpenses()
+    {
+        var expenseItems = await BudgetRepository.GetExpenseBudgetItems();
+        return expenseItems;
+    }
+
+    private decimal CalculateTotalIncome()
+    {
+        return incomeItems.Sum(item => item.Amount);
+    }
+
+    private decimal CalculateTotalExpenses()
+    {
+        return expenseItems.Sum(item => item.Amount);
+    }
+}

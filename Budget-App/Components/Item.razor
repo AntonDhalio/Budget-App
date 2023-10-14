@@ -1,10 +1,10 @@
 ﻿<div class="item">
     <div class="item-start">
-        <Icon IconClass="@BudgetItem.IconName"/>
-        <h4>@BudgetItem.Name</h4>
+        <Icon IconClass="@BudgetItem.IconName" IconColor="@IconColor"/>
+        <div class="item-title">@BudgetItem.Name</div>
     </div>
     <div class="item-content">
-        <div class="item-sum">@BudgetItem.Amount</div>
+        <div class="item-sum">@BudgetItem.Amount kr</div>
         <div class="item-shared">@BudgetItem.IsShared</div>
     </div>
 </div>
@@ -13,4 +13,6 @@
 @code {
     [Parameter]
     public Budget BudgetItem { get; set; }
+    [Parameter]
+    public string IconColor { get; set; }
 }

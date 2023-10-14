@@ -1,0 +1,78 @@
+﻿<div class="wrapper">
+    <div class="title">
+        <h2>Budget Summary</h2>
+    </div>
+    <div class="summary-body">
+        @if (dataIsLoaded)
+        {
+            <RadialGuage SectionData="sections" IncomeData="incomeItems" ExpenseData="expenseItems" />
+        }
+        else
+        {
+            <p>Loading...</p>
+        }
+    @foreach (var section in Sections)
+    {
+        var expensesInSection = BudgetItems
+        .Where(x => x.SectionId == section.Id && x.Type == "Expense")
+        .Sum(x => x.Amount);
+
+        if (expensesInSection > 0)
+        {
+            var percentage = (expensesInSection / totalIncome) * 100;
+            <div class="section">
+                <span class="section-color" style="background-color: @(section.SectionColor)"></span>
+                <div class="section-name">
+                    @(section.SectionName)
+                </div>
+                <div class="section-divider"></div>
+                <div class="section-percentage"> @percentage.ToString("0.00")% </div>
+            </div>
+        }
+    }
+    </div>
+</div>
+
+@code {
+    [Parameter]
+    public IEnumerable<Models.Section> Sections { get; set; }
+    [Parameter]
+    public IEnumerable<Models.Budget> BudgetItems { get; set; }
+    private decimal totalIncome { get; set; }
+    private IEnumerable<Budget> incomeItems = Enumerable.Empty<Budget>();
+    private IEnumerable<Budget> expenseItems = Enumerable.Empty<Budget>();
+    private IEnumerable<Models.Section> sections = Enumerable.Empty<Models.Section>();
+
+    private bool dataIsLoaded = false;
+
+    protected override async Task OnInitializedAsync()
+    {
+        incomeItems = await FetchBudgetIncome();
+        expenseItems = await FetchBudgetExpenses();
+        sections = await FetchSections();
+
+        dataIsLoaded = true;
+    }
+
+    private async Task<IEnumerable<Models.Section>> FetchSections()
+    {
+        return await BudgetRepository.GetAllSections();
+    }
+
+    private async Task<IEnumerable<Models.Budget>> FetchBudgetIncome()
+    {
+        var incomeItems = await BudgetRepository.GetIncomeBudgetItems();
+        return incomeItems;
+    }
+
+    private async Task<IEnumerable<Models.Budget>> FetchBudgetExpenses()
+    {
+        var expenseItems = await BudgetRepository.GetExpenseBudgetItems();
+        return expenseItems;
+    }
+
+    protected override void OnInitialized()
+    {
+        totalIncome = BudgetItems.Where(x => x.Type == "Income").Sum(x => x.Amount);
+    }
+}

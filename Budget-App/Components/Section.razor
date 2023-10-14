@@ -13,16 +13,18 @@
         {
             foreach(var item in items)
             {
-                <Item BudgetItem="item"/>
+                <Item BudgetItem="item" IconColor="@SectionData.SectionColor"/>
             }
         }
     </div>
     <div class="budget-add-item">
-        <button class="btn btn-outline-success" type="button" @onclick="ShowModal">
-            <span class="oi oi-plus"></span>
-            <span>Add Item</span>
-        </button>
-        <AddItemModal SectionId="SectionData.Id" OnModalFinish="UpdateBudgetItems" @ref="modal" @bind-IsVisible="modalVisible" />
+        <div class="d-grid gap-2 col-8 mx-auto">
+            <button class="btn btn-outline-success" type="button" @onclick="ShowModal">
+                <span class="oi oi-plus"></span>
+                <span>Add Item</span>
+            </button>
+        </div>
+        <AddItemModal SectionData="SectionData" OnModalFinish="UpdateBudgetItems" @ref="modal" @bind-IsVisible="modalVisible" />
     </div>
     <script>
         function toggleBodyScrolling(enableScroll) {
@@ -41,6 +43,8 @@
     public Models.Section SectionData { get; set; }
     [Parameter]
     public EventCallback<Models.Section> OnUpdateSection { get; set; }
+    [Parameter]
+    public EventCallback OnUpdateAll { get; set; }
     private IEnumerable<Models.Budget> items = Enumerable.Empty<Models.Budget>();
     private bool modalVisible = false;
     private AddItemModal modal;
@@ -65,11 +69,12 @@
     private async Task UpdateBudgetItems()
     {
         items = await FetchBudgetItems();
+        await OnUpdateAll.InvokeAsync();
     }
 
     private async Task<IEnumerable<Models.Budget>> FetchBudgetItems()
     {
-        var allItems = await BudgetRepository.GetBudgetItems();
+        var allItems = await BudgetRepository.GetAllBudgetItems();
         var filteredItems = allItems.Where(item => item.SectionId == SectionData.Id);
         return filteredItems;
     }

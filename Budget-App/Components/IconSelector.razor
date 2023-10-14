@@ -2,7 +2,7 @@
     <div class="icon-grid">
             @foreach (var iconClass in Icons)
             {
-                 <Icon IconClass="@iconClass" OnIconSelected="OnIconSelected"/>
+                 <Icon IconClass="@iconClass" IconColor="@IconColor" OnIconSelected="OnIconSelected"/>
             }
     </div>
 </div>
@@ -12,5 +12,7 @@
     public EventCallback<string> OnIconSelected { get; set; }
     [Parameter]
     public string IconWindowName { get; set; }
+    [Parameter]
+    public string IconColor { get; set; }
     private List<string> Icons = IconList.Icons;
 }

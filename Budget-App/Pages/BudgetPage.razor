@@ -1,5 +1,4 @@
 @page "/budget"
-@using Budget_App.Components
 @inject Data.BudgetRepository BudgetRepository
 
 @{
@@ -8,12 +7,14 @@
 
 <div>
     <h1>Budget</h1>
+
     @if (sections.Any())
     {
+        <BudgetSummary Sections="@sections" BudgetItems="@items" />
         foreach(var section in sections)
         {
             <div class="section-item">
-                <Section SectionData="section" OnUpdateSection="UpdateSection" />
+                <Section SectionData="section" OnUpdateSection="UpdateSection" OnUpdateAll="UpdateAll"/>
             </div>
         }
     }
@@ -21,56 +22,38 @@
     {
         <p>Sure looks empty here! Maybe you should add a Section?</p>
     }
-    <div class="collapse-button">
-        <button class="btn btn-primary" type="button" @onclick="ToggleAddSection" aria-expanded=" false" aria-controls="Add section collapse">
-            <span class="@AddSectionButton"></span>
-            <span>Add New Section</span>
-        </button>
-    </div>
-    <div class="@AddSectionCollapse" @onclick="ToggleAddSection" aria-hidden="@collapseAddSection">
-        <form method="post" @onsubmit="AddSection">
-            <label for="name">Name:</label>
-            <input type="text" id="name" name="name" @bind="sectionName" />
-
-            <button type="submit">Add Section</button>
-        </form>
-    </div>
+    <AddSection OnUpdateSection="UpdateSection"></AddSection>
 </div>
 
 @code {
-    private string sectionName;
     private IEnumerable<Budget> items = Enumerable.Empty<Budget>();
     private IEnumerable<Models.Section> sections = Enumerable.Empty<Models.Section>();
 
     protected override async Task OnInitializedAsync()
     {
         sections = await FetchSections();
-    }
-
-    private async Task AddSection()
-    {
-        string name = sectionName;
-        await BudgetRepository.AddSection(name);
-        sectionName = "";
-        sections = await FetchSections();
+        items = await FetchBudgetItems();
     }
 
     private async Task UpdateSection()
     {
         sections = await FetchSections();
+        StateHasChanged();
+    }
+
+    private async Task UpdateAll(){
+        sections = await FetchSections();
+        items = await FetchBudgetItems();
+        StateHasChanged();
     }
 
     private async Task<IEnumerable<Models.Section>> FetchSections()
     {
         return await BudgetRepository.GetAllSections(); 
     }
-
-    private bool collapseAddSection = true;
-
-    private string AddSectionCollapse => collapseAddSection ? "slide-up" : "slide-down";
-    private string AddSectionButton => collapseAddSection ? "oi oi-chevron-bottom" : "oi oi-chevron-top";
-    private void ToggleAddSection()
+    
+    private async Task<IEnumerable<Models.Budget>> FetchBudgetItems()
     {
-        collapseAddSection = !collapseAddSection;
+        return await BudgetRepository.GetAllBudgetItems(); 
     }
 }

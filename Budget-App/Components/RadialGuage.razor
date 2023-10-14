@@ -1,0 +1,123 @@
+﻿<div class="wrapper">
+    @if (IsDone)
+    {
+    <IgbRadialGauge
+                    Height="100%" Width="100%"
+                    MinimumValue=0
+                    MaximumValue=totalIncome
+
+                    ScaleStartAngle=120
+                    ScaleEndAngle=60
+                    ScaleBrush="transparent"
+                    ScaleSweepDirection=SweepDirection.Clockwise
+
+                    BackingOutline="transparent" 
+                    BackingBrush="transparent" 
+                    BackingShape=RadialGaugeBackingShape.Circular
+                    
+                    NeedleEndExtent=0.8
+                    NeedleShape=RadialGaugeNeedleShape.None
+                    NeedlePivotShape=RadialGaugePivotShape.None
+                    NeedlePivotWidthRatio=0.1
+                    NeedleBrush="#79797a" 
+                    NeedleOutline="#79797a" 
+
+                    TickStartExtent="0.69"
+                    TickEndExtent="0.75"
+                    TickStrokeThickness="1"
+                    TickBrush="black" 
+                    MinorTickBrush="transparent" 
+
+                    LabelExtent=0.935
+                    Font="15px Verdana,Arial" 
+
+
+                    >
+                    @for (int i = 0; i < RangeInfo.Count; i++)
+                        {
+                            GaugeRangeInfo info = RangeInfo[i];
+                            <IgbRadialGaugeRange StartValue=@info.StartValue
+                                              EndValue=@info.EndValue
+                                              InnerStartExtent=@info.InnerStartExtent
+                                              InnerEndExtent=@info.InnerEndExtent
+                                              OuterStartExtent=@info.OuterStartExtent
+                                              OuterEndExtent=@info.OuterEndExtent
+                                              Brush="@info.Brush"
+                                              Outline="@info.Outline">
+                            </IgbRadialGaugeRange>
+                        }
+    </IgbRadialGauge>
+    }
+</div>
+
+@code {
+    [Parameter]
+    public IEnumerable<Budget> IncomeData { get; set; }
+    [Parameter]
+    public IEnumerable<Models.Section> SectionData { get; set; }
+    [Parameter]
+    public IEnumerable<Budget> ExpenseData { get; set; }
+    public IEnumerable<Budget> SectionItems { get; set; }
+    private System.Collections.ObjectModel.ObservableCollection<GaugeRangeInfo> RangeInfo = new System.Collections.ObjectModel.ObservableCollection<GaugeRangeInfo>();
+    private double Value { get; set; }
+    private bool IsDone { get; set; }
+    private int currentEndValue { get; set; } = 0;
+    private int totalIncome { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        totalIncome = IncomeData.Sum(x => x.Amount);
+
+        foreach (var section in SectionData)
+        {
+            SectionItems = await BudgetRepository.GetBudgetItemsBySection(section.Id);
+            int income = SectionItems.Where(x => x.Type == "Income").Sum(x => x.Amount);
+            int expenses = SectionItems.Where(x => x.Type == "Expense").Sum(x => x.Amount);
+            int total = income - expenses;
+            if(total > 0)
+            {
+                total = 0;
+            }
+            else
+            {
+                total = Math.Abs(total);
+            }
+            GaugeRangeInfo range = new GaugeRangeInfo()
+                {
+                    Brush = section.SectionColor,
+                    Outline = "black",
+                    StartValue = currentEndValue,
+                    EndValue = currentEndValue + total,
+                    InnerStartExtent = 0.3,
+                    InnerEndExtent = 0.3,
+                    OuterStartExtent = 0.7,
+                    OuterEndExtent = 0.7
+                };
+            currentEndValue += total;
+            RangeInfo.Add(range);
+        }
+        IsDone = true;
+        int positives = CalculateRemainingIncome();
+        GaugeRangeInfo range2 = new GaugeRangeInfo()
+            {
+                Brush = "#7DCD85",
+                Outline = "black",
+                StartValue = currentEndValue,
+                EndValue = currentEndValue + positives,
+                InnerStartExtent = 0.3,
+                InnerEndExtent = 0.3,
+                OuterStartExtent = 0.7,
+                OuterEndExtent = 0.7
+            };
+        currentEndValue += positives;
+        RangeInfo.Add(range2);
+    }
+
+    private int CalculateRemainingIncome()
+    {
+        int income = IncomeData.Sum(x => x.Amount);
+        int expense = ExpenseData.Sum(x => x.Amount);
+        int remaining = income - expense;
+        return remaining;
+    }
+}

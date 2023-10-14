@@ -8,7 +8,7 @@ namespace Budget_App.Data
 {
     public class IconList
     {
-        public static List<string> Icons = new List<string>
+        public static readonly List<string> Icons = new()
         {
             "fa-solid fa-icons",
             "fa-solid fa-camera",
