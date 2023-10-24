@@ -17,7 +17,7 @@ namespace Budget_App.Data
             await db.CreateTableAsync<Budget>();
             await db.CreateTableAsync<Section>();
         }
-        public static async Task AddBudgetItem(string name, int amount, bool isShared, string type, string iconName,int id)
+        public static async Task AddBudgetItem(string name, int amount, bool isShared, string type, int sharedPercentage,string iconName,int id)
         {
             await Init();
             var item = new Budget
@@ -26,6 +26,7 @@ namespace Budget_App.Data
                 Amount = amount,
                 IsShared = isShared,
                 Type = type,
+                SharedPercentage = sharedPercentage,
                 IconName = iconName,
                 SectionId = id
             };

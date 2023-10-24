@@ -3,30 +3,31 @@
         <h2>Budget Summary</h2>
     </div>
     <div class="summary-body">
-        @if (dataIsLoaded)
-        {
-            <RadialGuage SectionData="sections" IncomeData="incomeItems" ExpenseData="expenseItems" />
-        }
-        else
-        {
-            <p>Loading...</p>
-        }
+        <div class="radial-guage">
+            @if (dataIsLoaded)
+            {
+                <RadialGuage SectionData="sections" IncomeData="incomeItems" ExpenseData="expenseItems" />
+            }
+            else
+            {
+                <p>Loading...</p>
+            }
+        </div>
     @foreach (var section in Sections)
     {
         var expensesInSection = BudgetItems
         .Where(x => x.SectionId == section.Id && x.Type == "Expense")
-        .Sum(x => x.Amount);
+        .Sum(x => (x.Amount * x.SharedPercentage / 100));
 
         if (expensesInSection > 0)
         {
-            var percentage = (expensesInSection / totalIncome) * 100;
             <div class="section">
                 <span class="section-color" style="background-color: @(section.SectionColor)"></span>
                 <div class="section-name">
                     @(section.SectionName)
                 </div>
                 <div class="section-divider"></div>
-                <div class="section-percentage"> @percentage.ToString("0.00")% </div>
+                <div class="section-percentage"> @expensesInSection kr</div>
             </div>
         }
     }

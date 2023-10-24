@@ -24,12 +24,12 @@
 
                     TickStartExtent="0.69"
                     TickEndExtent="0.75"
-                    TickStrokeThickness="1"
+                    TickStrokeThickness="0.5"
                     TickBrush="black" 
                     MinorTickBrush="transparent" 
 
-                    LabelExtent=0.935
-                    Font="15px Verdana,Arial" 
+                    LabelExtent=0.9
+                    Font="12px Verdana,Arial" 
 
 
                     >
@@ -72,7 +72,7 @@
         {
             SectionItems = await BudgetRepository.GetBudgetItemsBySection(section.Id);
             int income = SectionItems.Where(x => x.Type == "Income").Sum(x => x.Amount);
-            int expenses = SectionItems.Where(x => x.Type == "Expense").Sum(x => x.Amount);
+            int expenses = SectionItems.Where(x => x.Type == "Expense").Sum(x => (x.Amount * x.SharedPercentage / 100));
             int total = income - expenses;
             if(total > 0)
             {
@@ -116,7 +116,7 @@
     private int CalculateRemainingIncome()
     {
         int income = IncomeData.Sum(x => x.Amount);
-        int expense = ExpenseData.Sum(x => x.Amount);
+        int expense = ExpenseData.Sum(x => (x.Amount * x.SharedPercentage / 100));
         int remaining = income - expense;
         return remaining;
     }

@@ -31,20 +31,31 @@
                         </InputRadioGroup>
                     </div>
                 </div>
-                <div class="form-floating mb-3">
-                    <div class="btn-group" role="group" aria-label="Type selection">
-                        <InputRadioGroup id="shared" name="shared" @bind-Value=BudgetItem.IsShared>     
-                            <InputRadio class="btn-check" Value=false id=@($"isNotShared-{SectionData.Id}") />
-                            <label class="btn btn-outline-secondary" for=@($"isNotShared-{SectionData.Id}")>Personal</label>
-                            <InputRadio class="btn-check" Value=true id=@($"isShared-{SectionData.Id}") />
-                            <label class="btn btn-outline-secondary" for=@($"isShared-{SectionData.Id}")>Shared</label>                          
-                        </InputRadioGroup>
+                @if(BudgetItem.Type == "Expense")
+                {
+                    <div class="form-floating mb-3">
+                        <div class="btn-group" role="group" aria-label="Type selection">
+                            <InputRadioGroup id="shared" name="shared" @bind-Value=BudgetItem.IsShared>     
+                                <InputRadio class="btn-check" Value=false id=@($"isNotShared-{SectionData.Id}") />
+                                <label class="btn btn-outline-secondary" for=@($"isNotShared-{SectionData.Id}")>Personal</label>
+                                <InputRadio class="btn-check" Value=true id=@($"isShared-{SectionData.Id}") />
+                                <label class="btn btn-outline-secondary" for=@($"isShared-{SectionData.Id}")>Shared</label>                          
+                            </InputRadioGroup>
+                        </div>
                     </div>
-                </div>
+                }
+                @if(BudgetItem.IsShared == true)
+                {
+                    <div class="form-floating mb-3">
+                        <InputNumber class="form-control" id="sharedPercentage" name="sharedPercentage" placeholder="50" @bind-Value=BudgetItem.SharedPercentage />
+                        <label for="number">Percentage you will pay</label>
+                        <ValidationMessage For="() => BudgetItem.SharedPercentage" />
+                    </div>
+                }
                 <div class="form-floating mb-3">
                     <div class="icon-picker">
                         <div class="displayed-icon" @onclick="CloseButtonPicker">
-                            <Icon IconClass="@BudgetItem.IconClass" IconColor="@SectionData.SectionColor"/>
+                            <Icon IconClass="@BudgetItem.IconClass" IconColor="@SectionData.SectionColor" IsEventSet="true" />
                         </div>
                         <div class="icon-clicker">
                             <IconSelector IconWindowName="@IconWindowName" OnIconSelected="SetIcon" IconColor="@SectionData.SectionColor" />
@@ -112,15 +123,17 @@
             int id = SectionData.Id;
             bool isShared = BudgetItem.IsShared;
             string type = BudgetItem.Type;
+            int sharedPercentage = BudgetItem.IsShared == true ? BudgetItem.SharedPercentage : 100;
             string IconName = BudgetItem.IconClass;
 
-            await BudgetRepository.AddBudgetItem(name, amount, isShared, type, IconName, id);
+            await BudgetRepository.AddBudgetItem(name, amount, isShared, type, sharedPercentage,IconName, id);
 
             BudgetItem.Name = "";
             BudgetItem.Amount = 0;
             BudgetItem.IsShared = false; 
             BudgetItem.Type = BudgetType.Income.ToString();
             BudgetItem.IconClass = "fa-solid fa-icons";
+            BudgetItem.SharedPercentage = 100;
 
             await OnModalFinish.InvokeAsync();
             CloseModal();

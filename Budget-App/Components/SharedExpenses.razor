@@ -1,0 +1,32 @@
+﻿<div class="icons">
+    <i class="fas fa-solid fa-user" />
+    <i class="fas fa-solid fa-users" />
+</div>
+
+@code {
+    private IEnumerable<Budget> incomeItems = Enumerable.Empty<Budget>();
+    private IEnumerable<Budget> expenseItems = Enumerable.Empty<Budget>();
+
+    private bool dataIsLoaded = false;
+
+
+    protected override async Task OnInitializedAsync()
+    {
+        incomeItems = await FetchBudgetIncome();
+        expenseItems = await FetchBudgetExpenses();
+
+        dataIsLoaded = true;
+    }
+
+    private async Task<IEnumerable<Models.Budget>> FetchBudgetIncome()
+    {
+        var incomeItems = await BudgetRepository.GetIncomeBudgetItems();
+        return incomeItems;
+    }
+
+    private async Task<IEnumerable<Models.Budget>> FetchBudgetExpenses()
+    {
+        var expenseItems = await BudgetRepository.GetExpenseBudgetItems();
+        return expenseItems;
+    }
+}
