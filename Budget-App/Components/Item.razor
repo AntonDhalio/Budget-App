@@ -1,12 +1,31 @@
 ﻿<div class="item">
-    <div class="item-start">
-        <Icon IconClass="@BudgetItem.IconName" IconColor="@IconColor"/>
-        <div class="item-title">@BudgetItem.Name</div>
+    <div class="item-summary" @onclick="(BudgetItem.IsShared ? ToggleDetails : null)" style="@(BudgetItem.IsShared ? "cursor:pointer" : "cursor:default")">
+        <div class="item-start">
+            <Icon IconClass="@BudgetItem.IconName" IconColor="@IconColor"/>
+            <div class="item-title">@BudgetItem.Name</div>
+        </div>
+        <div class="item-content">
+            <div class="item-sum">@CalculateAmount() kr</div>
+            <div class="item-shared">
+                @if (@BudgetItem.IsShared == true)
+                {
+                    <i class="fas fa-solid fa-users" />
+                }
+                else
+                {
+                    <i class="fas fa-solid fa-user" />
+                }
+            </div>
+        </div>
     </div>
-    <div class="item-content">
-        <div class="item-sum">@BudgetItem.Amount kr</div>
-        <div class="item-shared">@BudgetItem.IsShared</div>
-    </div>
+    @if (showDetails)
+    {
+        <div class="shared-details">
+            <div>Total Cost: @BudgetItem.Amount kr</div>
+            <div>Percentage: @BudgetItem.SharedPercentage%</div>
+            <div>User Cost: @CalculateAmount() kr</div>
+        </div>
+    }
 </div>
 
 
@@ -15,4 +34,15 @@
     public Budget BudgetItem { get; set; }
     [Parameter]
     public string IconColor { get; set; }
+    private bool showDetails = false;
+
+    public int CalculateAmount()
+    {
+        int sharedAmount = BudgetItem.Amount * BudgetItem.SharedPercentage / 100;
+        return sharedAmount;
+    }
+    private void ToggleDetails()
+    {
+        showDetails = !showDetails;
+    }
 }

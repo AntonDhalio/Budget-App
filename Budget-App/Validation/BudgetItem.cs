@@ -11,6 +11,8 @@ namespace Budget_App.Validation
         public int Amount { get; set; }
         [Required]
         public bool IsShared { get; set; }
+        [Range(0, 100, ErrorMessage = "Please choose a percentage between 0 and 100.")]
+        public int SharedPercentage { get; set; }
         [Required]
         public string Type { get; set; }
         [Required(ErrorMessage ="Please choose an icon.")]

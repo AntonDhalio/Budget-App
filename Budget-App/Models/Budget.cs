@@ -12,6 +12,7 @@ namespace Budget_App.Models
         public bool IsShared { get; set; }
         public string Type { get; set; }
         public string IconName { get; set; }
+        public int SharedPercentage { get; set; }
         [Indexed]
         public int SectionId { get; set; }
         
