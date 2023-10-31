@@ -24,7 +24,6 @@ namespace Budget_App
 #endif
             builder.Services.AddSingleton<BudgetRepository>();
             builder.Services.AddIgniteUIBlazor(typeof(IgbCircularProgressModule));
-            builder.Services.AddIgniteUIBlazor(typeof(IgbLinearGaugeModule));
             builder.Services.AddIgniteUIBlazor(typeof(IgbRadialGaugeModule));
 
             return builder.Build();

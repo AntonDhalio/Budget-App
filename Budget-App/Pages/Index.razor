@@ -1,4 +1,4 @@
-﻿@page "/"
+﻿@page "/budget"
 @inject Data.BudgetRepository BudgetRepository
 
 <div>
@@ -16,7 +16,6 @@ else
     <p>Loading...</p>
 }
 <br />
-<Guage />
 
 @code{
     private IEnumerable<Budget> incomeItems = Enumerable.Empty<Budget>();
