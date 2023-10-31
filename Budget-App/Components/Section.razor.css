@@ -17,6 +17,15 @@
     align-items: center;
     padding-bottom: 1em;
 }
+.section-title {
+    display: flex;
+    width: 90%;
+    justify-content: center;
+    padding-left: 10%;
+}
+.section-remove{
+    width: 10%;
+}
 .budget-items{
     display: flex;
     flex-direction: column;

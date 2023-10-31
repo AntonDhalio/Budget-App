@@ -10,7 +10,7 @@
         <div class="form-body">
             <EditForm Model=@BudgetItem OnValidSubmit="AddItemToBudget">
             <DataAnnotationsValidator />
-                <div class="form-floating mb-3">
+                <div class="form-floating mb-2">
                     <InputText class="form-control" id="name" name="name" placeholder="Doggy daycare" @bind-Value=BudgetItem.Name />
                     <label for="name">Name</label>
                     <ValidationMessage For="() => BudgetItem.Name" />

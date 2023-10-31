@@ -7,15 +7,12 @@
     private IEnumerable<Budget> incomeItems = Enumerable.Empty<Budget>();
     private IEnumerable<Budget> expenseItems = Enumerable.Empty<Budget>();
 
-    private bool dataIsLoaded = false;
 
 
     protected override async Task OnInitializedAsync()
     {
         incomeItems = await FetchBudgetIncome();
         expenseItems = await FetchBudgetExpenses();
-
-        dataIsLoaded = true;
     }
 
     private async Task<IEnumerable<Models.Budget>> FetchBudgetIncome()
