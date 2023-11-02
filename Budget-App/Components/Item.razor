@@ -22,9 +22,12 @@
     {
         <div class="shared-details">
             <div>Total Cost: @BudgetItem.Amount kr</div>
-            
             <div>Percentage: @BudgetItem.SharedPercentage%</div>
             <div>User Cost: @CalculateAmount() kr</div>
+            <button class="btn btn-outline-error border-0" type="button" @onclick="RemoveItem">
+                <span class="oi oi-cross"></span>
+                <span>Remove Item</span>
+            </button>
         </div>
     }
 </div>
@@ -35,6 +38,8 @@
     public Budget BudgetItem { get; set; }
     [Parameter]
     public string IconColor { get; set; }
+    [Parameter]
+    public EventCallback OnUpdateAll { get; set; }
     private bool showDetails = false;
 
     public int CalculateAmount()
@@ -45,5 +50,10 @@
     private void ToggleDetails()
     {
         showDetails = !showDetails;
+    }
+    private async Task RemoveItem()
+    {
+        await BudgetRepository.RemoveBudgetItem(BudgetItem.Id);
+        await OnUpdateAll.InvokeAsync();
     }
 }
