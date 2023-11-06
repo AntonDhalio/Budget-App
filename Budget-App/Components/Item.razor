@@ -1,5 +1,5 @@
 ﻿<div class="item">
-    <div class="item-summary" @onclick="(BudgetItem.IsShared ? ToggleDetails : null)" style="@(BudgetItem.IsShared ? "cursor:pointer" : "cursor:default")">
+    <div class="item-summary" @onclick="ToggleDetails">
         <div class="item-start">
             <Icon IconClass="@BudgetItem.IconName" IconColor="@IconColor"/>
             <div class="item-title">@BudgetItem.Name</div>
@@ -20,15 +20,46 @@
     </div>
     @if (showDetails)
     {
-        <div class="shared-details">
-            <div>Total Cost: @BudgetItem.Amount kr</div>
-            <div>Percentage: @BudgetItem.SharedPercentage%</div>
-            <div>User Cost: @CalculateAmount() kr</div>
-            <button class="btn btn-outline-error border-0" type="button" @onclick="RemoveItem">
-                <span class="oi oi-cross"></span>
-                <span>Remove Item</span>
-            </button>
-        </div>
+        if (BudgetItem.IsShared)
+        {
+            <div class="item-details">
+                <div class="input-wrapper">
+                    <div class="input-title">Total Cost: </div>
+                    <div class="input-value">
+                        <InputNumber class="form-control-plaintext" name="sharedPercentage" placeholder="50" @bind-Value=BudgetItem.Amount />
+                    </div>
+                    <div class="input-currency">kr</div>
+                </div>
+                <div class="input-wrapper">
+                    <div class="input-title">Percentage: </div>
+                    <div class="input-value">
+                        <InputNumber class="form-control-plaintext" name="sharedPercentage" placeholder="50" @bind-Value=BudgetItem.SharedPercentage />
+                    </div>
+                    <div class="input-currency">%</div>
+                </div>
+                <div class="detail">User Cost: @CalculateAmount() kr</div>
+                <button class="btn btn-danger border-0" type="button" @onclick="RemoveItem">
+                    <span class="fas fa-solid fa-x"></span>
+                    <span>Remove Item</span>
+                </button>
+            </div>
+        }
+        else
+        {
+            <div class="item-details">
+                <div class="input-wrapper">
+                    <div class="input-title">Total Cost: </div>
+                    <div class="input-value">
+                        <InputNumber class="form-control-plaintext" name="sharedPercentage" placeholder="50" @bind-Value=BudgetItem.Amount />
+                    </div>
+                    <div>kr</div>
+                </div>
+                <button class="btn btn-danger border-0" type="button" @onclick="RemoveItem">
+                    <span class="fas fa-solid fa-x"></span>
+                    <span>Remove Item</span>
+                </button>
+            </div>
+        }
     }
 </div>
 
@@ -53,6 +84,7 @@
     }
     private async Task RemoveItem()
     {
+        ToggleDetails();
         await BudgetRepository.RemoveBudgetItem(BudgetItem.Id);
         await OnUpdateAll.InvokeAsync();
     }
