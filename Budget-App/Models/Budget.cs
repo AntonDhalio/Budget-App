@@ -13,6 +13,7 @@ namespace Budget_App.Models
         public string Type { get; set; }
         public string IconName { get; set; }
         public int SharedPercentage { get; set; }
+        public bool IsActive { get; set; }
         [Indexed]
         public int SectionId { get; set; }
         

@@ -17,7 +17,7 @@
         {
             foreach(var item in items)
             {
-                <Item BudgetItem="item" IconColor="@SectionData.SectionColor" OnUpdateAll="UpdateBudgetItems"/>
+                <Item BudgetItem="item" IconColor="@SectionData.SectionColor" OnUpdateAll="OnUpdateAll" OnUpdateBudgetItems="UpdateBudgetItems"/>
             }
         }
     </div>

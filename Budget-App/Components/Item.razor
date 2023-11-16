@@ -23,41 +23,35 @@
         if (BudgetItem.IsShared)
         {
             <div class="item-details">
-                <div class="input-wrapper">
-                    <div class="input-title">Total Cost: </div>
-                    <div class="input-value">
-                        <InputNumber class="form-control-plaintext" name="sharedPercentage" placeholder="50" @bind-Value=BudgetItem.Amount />
-                    </div>
-                    <div class="input-currency">kr</div>
+                <SubItem title="Total cost" value="@CalculateAmount()" currency="kr" BudgetItem="@BudgetItem" propertyToBind="Amount" OnUpdateAll="OnUpdateAll"/>
+                <SubItem title="Percentage" value="@BudgetItem.SharedPercentage" currency="%" BudgetItem="@BudgetItem" propertyToBind="Percentage" OnUpdateAll="OnUpdateAll"/>
+                <SubItem title="User cost" value="@CalculateAmount()" currency="kr" BudgetItem="@BudgetItem" OnUpdateAll="OnUpdateAll"/>
+                <div class="button-group">
+                    <button class="btn  @(BudgetItem.IsActive ? "btn-success" : "btn-warning") border-0" type="button" @onclick="ToggleItemActivity">
+                        <span class="fas fa-solid @(BudgetItem.IsActive ? "fa-play" : "fa-play icon-small")"></span>
+                        <span>/</span>
+                        <span class="fas fa-solid @(BudgetItem.IsActive ? "fa-pause icon-small" : "fa-pause")"></span>
+                    </button>
+                    <button class="btn btn-danger border-0" type="button" @onclick="RemoveItem">
+                        <span class="fas fa-regular fa-times"></span>
+                    </button>
                 </div>
-                <div class="input-wrapper">
-                    <div class="input-title">Percentage: </div>
-                    <div class="input-value">
-                        <InputNumber class="form-control-plaintext" name="sharedPercentage" placeholder="50" @bind-Value=BudgetItem.SharedPercentage />
-                    </div>
-                    <div class="input-currency">%</div>
-                </div>
-                <div class="detail">User Cost: @CalculateAmount() kr</div>
-                <button class="btn btn-danger border-0" type="button" @onclick="RemoveItem">
-                    <span class="fas fa-solid fa-x"></span>
-                    <span>Remove Item</span>
-                </button>
             </div>
         }
         else
         {
             <div class="item-details">
-                <div class="input-wrapper">
-                    <div class="input-title">Total Cost: </div>
-                    <div class="input-value">
-                        <InputNumber class="form-control-plaintext" name="sharedPercentage" placeholder="50" @bind-Value=BudgetItem.Amount />
-                    </div>
-                    <div>kr</div>
+                <SubItem title="Total cost" value="@CalculateAmount()" currency="kr" BudgetItem="@BudgetItem" propertyToBind="Amount" OnUpdateAll="OnUpdateAll"/>
+                <div class="button-group">
+                       <button class="btn  @(BudgetItem.IsActive ? "btn-success" : "btn-warning") border-0" type="button" @onclick="ToggleItemActivity">
+                        <span class="fas fa-solid @(BudgetItem.IsActive ? "fa-play" : "fa-play icon-small")"></span>
+                        <span>/</span>
+                        <span class="fas fa-solid @(BudgetItem.IsActive ? "fa-pause icon-small" : "fa-pause")"></span>
+                    </button>
+                    <button class="btn btn-danger border-0" type="button" @onclick="RemoveItem">
+                        <span class="fas fa-regular fa-times"></span>
+                    </button>
                 </div>
-                <button class="btn btn-danger border-0" type="button" @onclick="RemoveItem">
-                    <span class="fas fa-solid fa-x"></span>
-                    <span>Remove Item</span>
-                </button>
             </div>
         }
     }
@@ -71,6 +65,8 @@
     public string IconColor { get; set; }
     [Parameter]
     public EventCallback OnUpdateAll { get; set; }
+    [Parameter]
+    public EventCallback OnUpdateBudgetItems { get; set; }
     private bool showDetails = false;
 
     public int CalculateAmount()
@@ -86,6 +82,13 @@
     {
         ToggleDetails();
         await BudgetRepository.RemoveBudgetItem(BudgetItem.Id);
+        await OnUpdateBudgetItems.InvokeAsync();
+    }
+
+    private async Task ToggleItemActivity()
+    {
+        await BudgetRepository.ToggleItemActivityStatus(BudgetItem.Id);
         await OnUpdateAll.InvokeAsync();
+        await OnUpdateBudgetItems.InvokeAsync();
     }
 }

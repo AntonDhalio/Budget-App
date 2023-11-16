@@ -1,9 +1,6 @@
 @page "/"
 @inject Data.BudgetRepository BudgetRepository
 
-@{
-}
-
 <div>
     <div class="page-title">
         <h1>Budget</h1>
@@ -11,7 +8,7 @@
 
     @if (sections.Any())
     {
-        <BudgetSummary Sections="@sections" BudgetItems="@items" />
+        <BudgetSummary Sections="@sections" BudgetItems="@items" IncomeItems="@incomeItems" ExpenseItems="@expenseItems"/>
         foreach(var section in sections)
         {
             <div class="section-item">
@@ -29,11 +26,15 @@
 @code {
     private IEnumerable<Budget> items = Enumerable.Empty<Budget>();
     private IEnumerable<Models.Section> sections = Enumerable.Empty<Models.Section>();
+    private IEnumerable<Budget> incomeItems = Enumerable.Empty<Budget>();
+    private IEnumerable<Budget> expenseItems = Enumerable.Empty<Budget>();
 
     protected override async Task OnInitializedAsync()
     {
         sections = await FetchSections();
         items = await FetchBudgetItems();
+        incomeItems = await FetchBudgetIncome();
+        expenseItems = await FetchBudgetExpenses();
     }
 
     private async Task UpdateSection()
@@ -45,6 +46,8 @@
     private async Task UpdateAll(){
         sections = await FetchSections();
         items = await FetchBudgetItems();
+        incomeItems = await FetchBudgetIncome();
+        expenseItems = await FetchBudgetExpenses();
         StateHasChanged();
     }
 
@@ -56,5 +59,15 @@
     private async Task<IEnumerable<Models.Budget>> FetchBudgetItems()
     {
         return await BudgetRepository.GetAllBudgetItems(); 
+    }
+
+    private async Task<IEnumerable<Models.Budget>> FetchBudgetIncome()
+    {
+        return await BudgetRepository.GetIncomeBudgetItems();
+    }
+
+    private async Task<IEnumerable<Models.Budget>> FetchBudgetExpenses()
+    {
+        return await BudgetRepository.GetExpenseBudgetItems();
     }
 }

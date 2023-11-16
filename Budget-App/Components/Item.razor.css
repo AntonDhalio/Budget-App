@@ -80,4 +80,14 @@
     display: flex;
     width: 20%;
 }
+.button-group{
+    display: flex;
+    flex-direction: row;
+    justify-content: space-around;
+    width: 100%;
+    padding-top: 0.5em;
+}
+.icon-small {
+    font-size: 12px; 
+}
 

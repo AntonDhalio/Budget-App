@@ -1,0 +1,31 @@
+﻿.input-wrapper {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    background-color: #f5f3f2;
+    width: 80%;
+    margin-bottom: 0.5em;
+    border-bottom: 1px solid rgb(240, 235, 235);
+    border-top-width: 1px;
+    border-right-width: 1px;
+    border-left-width: 1px;
+    border-top-color: rgb(240, 235, 235);
+    border-right-color: rgb(240, 235, 235);
+    border-left-color: rgb(240, 235, 235);
+}
+.input-title{
+    display: flex;
+    width: 50%;
+    justify-content: flex-start;
+}
+.input-value {
+    display: flex;
+    width: 40%;
+    padding-left: 0.5em;
+    padding-right: 0.5em;
+}
+.input-currency {
+    display: flex;
+    width: 10%;
+}
+
