@@ -52,11 +52,13 @@
     <ItemGroup>
       <None Remove="Components\AddItemModal.razor.css" />
       <None Remove="Components\BudgetSummary.razor.css" />
+      <None Remove="Components\SubItem.razor.css" />
     </ItemGroup>
 
     <ItemGroup>
       <Content Include="Components\AddItemModal.razor.css" />
       <Content Include="Components\BudgetSummary.razor.css" />
+      <Content Include="Components\SubItem.razor.css" />
     </ItemGroup>
 
     <ItemGroup>

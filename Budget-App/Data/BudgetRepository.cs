@@ -28,10 +28,33 @@ namespace Budget_App.Data
                 Type = type,
                 SharedPercentage = sharedPercentage,
                 IconName = iconName,
-                SectionId = id
+                SectionId = id,
+                IsActive = true
             };
 
             await db.InsertAsync(item);
+        }
+        public static async Task UpdateBudgetItem(string name, int amount, bool isShared, string type, int sharedPercentage, string iconName, int id)
+        {
+            await Init();
+            Budget existingBudgetItem = await db.GetAsync<Budget>(id);
+            existingBudgetItem.Name = name;
+            existingBudgetItem.Amount = amount;
+            existingBudgetItem.IsShared = isShared;
+            existingBudgetItem.Type = type;
+            existingBudgetItem.SharedPercentage = sharedPercentage;
+            existingBudgetItem.IconName = iconName;
+
+            await db.UpdateAsync(existingBudgetItem);
+        }
+        public static async Task ToggleItemActivityStatus(int id)
+        {
+            await Init();
+            Budget existingBudgetItem = await db.GetAsync<Budget>(id);
+            
+            existingBudgetItem.IsActive = !existingBudgetItem.IsActive;
+
+            await db.UpdateAsync(existingBudgetItem);
         }
         public static async Task RemoveBudgetItem(int id)
         {

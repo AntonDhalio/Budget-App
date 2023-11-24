@@ -4,19 +4,12 @@
     </div>
     <div class="summary-body">
         <div class="radial-guage">
-            @if (dataIsLoaded)
-            {
-                <RadialGuage SectionData="sections" IncomeData="incomeItems" ExpenseData="expenseItems" />
-            }
-            else
-            {
-                <p>Loading...</p>
-            }
+             <RadialGuage SectionData="Sections" IncomeData="IncomeItems" ExpenseData="ExpenseItems" />
         </div>
     @foreach (var section in Sections)
     {
         var expensesInSection = BudgetItems
-        .Where(x => x.SectionId == section.Id && x.Type == "Expense")
+        .Where(x => x.SectionId == section.Id && x.Type == "Expense" && x.IsActive == true)
         .Sum(x => (x.Amount * x.SharedPercentage / 100));
 
         if (expensesInSection > 0)
@@ -31,6 +24,14 @@
             </div>
         }
     }
+        <div class="section">
+            <span class="section-color" style="background-color: @(CalculateRemainingIncome() >= 0 ? "#7DCD85" : "#b20000")"></span>
+            <div class="section-name">
+                Remaining assets
+            </div>
+            <div class="section-divider"></div>
+            <div class="section-percentage"> @CalculateRemainingIncome() kr</div>
+        </div>
     </div>
 </div>
 
@@ -39,41 +40,16 @@
     public IEnumerable<Models.Section> Sections { get; set; }
     [Parameter]
     public IEnumerable<Models.Budget> BudgetItems { get; set; }
-    private decimal totalIncome { get; set; }
-    private IEnumerable<Budget> incomeItems = Enumerable.Empty<Budget>();
-    private IEnumerable<Budget> expenseItems = Enumerable.Empty<Budget>();
-    private IEnumerable<Models.Section> sections = Enumerable.Empty<Models.Section>();
+    [Parameter]
+    public IEnumerable<Models.Budget> IncomeItems { get; set;}
+    [Parameter]
+    public IEnumerable<Models.Budget> ExpenseItems { get; set;}
 
-    private bool dataIsLoaded = false;
-
-    protected override async Task OnInitializedAsync()
+    private int CalculateRemainingIncome()
     {
-        incomeItems = await FetchBudgetIncome();
-        expenseItems = await FetchBudgetExpenses();
-        sections = await FetchSections();
-
-        dataIsLoaded = true;
-    }
-
-    private async Task<IEnumerable<Models.Section>> FetchSections()
-    {
-        return await BudgetRepository.GetAllSections();
-    }
-
-    private async Task<IEnumerable<Models.Budget>> FetchBudgetIncome()
-    {
-        var incomeItems = await BudgetRepository.GetIncomeBudgetItems();
-        return incomeItems;
-    }
-
-    private async Task<IEnumerable<Models.Budget>> FetchBudgetExpenses()
-    {
-        var expenseItems = await BudgetRepository.GetExpenseBudgetItems();
-        return expenseItems;
-    }
-
-    protected override void OnInitialized()
-    {
-        totalIncome = BudgetItems.Where(x => x.Type == "Income").Sum(x => x.Amount);
+        int income = IncomeItems.Where(x => x.IsActive == true).Sum(x => x.Amount);
+        int expense = ExpenseItems.Where(x => x.IsActive == true).Sum(x => (x.Amount * x.SharedPercentage / 100));
+        int remaining = income - expense;
+        return remaining;
     }
 }

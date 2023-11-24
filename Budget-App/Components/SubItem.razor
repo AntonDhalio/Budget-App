@@ -1,0 +1,47 @@
+﻿<div class="input-wrapper">
+    <div class="input-title">@title: </div>
+    <div class="input-value">
+        @if(propertyToBind == null)
+        {
+            <input class="form-control-plaintext" placeholder="50" readonly value="@value" />
+        }
+        else if(propertyToBind == "Amount")
+        {
+            <InputNumber class="form-control-plaintext" placeholder="5000" @bind-Value:after="UpdateItemValue" @bind-Value=BudgetItem.Amount />
+        }
+        else if(propertyToBind == "Percentage")
+        {
+            <InputNumber class="form-control-plaintext" placeholder="50" @bind-Value:after="UpdateItemValue" @bind-Value=BudgetItem.SharedPercentage  />
+        }
+    </div>
+    <div class="input-currency">@currency</div>
+</div>
+
+@code {
+    [Parameter]
+    public Budget BudgetItem { get; set; }
+    [Parameter]
+    public string title { get; set; }
+    [Parameter]
+    public int value { get; set; }
+    [Parameter]
+    public string propertyToBind { get; set; } 
+    [Parameter]
+    public string currency { get; set; }
+    [Parameter]
+    public EventCallback OnUpdateAll { get; set; }
+
+    private async Task UpdateItemValue()
+    {
+        string name = BudgetItem.Name;
+        int amount = BudgetItem.Amount;
+        int id = BudgetItem.Id;
+        bool isShared = BudgetItem.IsShared;
+        string type = BudgetItem.Type;
+        int sharedPercentage = BudgetItem.IsShared == true ? BudgetItem.SharedPercentage : 100;
+        string IconName = BudgetItem.IconName;
+
+        await BudgetRepository.UpdateBudgetItem(name, amount, isShared, type, sharedPercentage, IconName, id);
+        await OnUpdateAll.InvokeAsync();
+    }
+}

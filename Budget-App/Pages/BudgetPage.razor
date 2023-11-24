@@ -1,21 +1,14 @@
 @page "/"
 @inject Data.BudgetRepository BudgetRepository
 
-@{
-}
-
-<div>
-    <div class="page-title">
-        <h1>Budget</h1>
-    </div>
-
+<div >
     @if (sections.Any())
     {
-        <BudgetSummary Sections="@sections" BudgetItems="@items" />
+        <BudgetSummary Sections="@sections" BudgetItems="@items" IncomeItems="@incomeItems" ExpenseItems="@expenseItems"/>
         foreach(var section in sections)
         {
             <div class="section-item">
-                <Section SectionData="section" OnUpdateSection="UpdateSection" OnUpdateAll="UpdateAll"/>
+                <Section SectionData="section" OnUpdate="UpdateSection"/>
             </div>
         }
     }
@@ -29,23 +22,36 @@
 @code {
     private IEnumerable<Budget> items = Enumerable.Empty<Budget>();
     private IEnumerable<Models.Section> sections = Enumerable.Empty<Models.Section>();
+    private IEnumerable<Budget> incomeItems = Enumerable.Empty<Budget>();
+    private IEnumerable<Budget> expenseItems = Enumerable.Empty<Budget>();
 
     protected override async Task OnInitializedAsync()
     {
-        sections = await FetchSections();
-        items = await FetchBudgetItems();
+        await LoadData();
     }
 
     private async Task UpdateSection()
     {
-        sections = await FetchSections();
-        StateHasChanged();
+        await LoadData();
     }
 
-    private async Task UpdateAll(){
-        sections = await FetchSections();
-        items = await FetchBudgetItems();
-        StateHasChanged();
+    private async Task LoadData()
+    {
+        try
+        {
+            sections = await FetchSections();
+            items = await FetchBudgetItems();
+            incomeItems = await FetchBudgetIncome();
+            expenseItems = await FetchBudgetExpenses();
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"An error occurred: {ex.Message}");
+        }
+        finally
+        {
+            StateHasChanged();
+        }
     }
 
     private async Task<IEnumerable<Models.Section>> FetchSections()
@@ -56,5 +62,15 @@
     private async Task<IEnumerable<Models.Budget>> FetchBudgetItems()
     {
         return await BudgetRepository.GetAllBudgetItems(); 
+    }
+
+    private async Task<IEnumerable<Models.Budget>> FetchBudgetIncome()
+    {
+        return await BudgetRepository.GetIncomeBudgetItems();
+    }
+
+    private async Task<IEnumerable<Models.Budget>> FetchBudgetExpenses()
+    {
+        return await BudgetRepository.GetExpenseBudgetItems();
     }
 }
