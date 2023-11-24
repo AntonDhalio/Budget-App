@@ -17,7 +17,7 @@
         {
             foreach(var item in items)
             {
-                <Item BudgetItem="item" IconColor="@SectionData.SectionColor" OnUpdateAll="OnUpdateAll" OnUpdateBudgetItems="UpdateBudgetItems"/>
+                <Item BudgetItem="item" IconColor="@SectionData.SectionColor" OnUpdateAll="OnUpdate" OnUpdateBudgetItems="UpdateBudgetItems"/>
             }
         }
     </div>
@@ -46,9 +46,7 @@
     [Parameter]
     public Models.Section SectionData { get; set; }
     [Parameter]
-    public EventCallback<Models.Section> OnUpdateSection { get; set; }
-    [Parameter]
-    public EventCallback OnUpdateAll { get; set; }
+    public EventCallback OnUpdate { get; set; }
     private IEnumerable<Models.Budget> items = Enumerable.Empty<Models.Budget>();
     private bool modalVisible = false;
     private AddItemModal modal;
@@ -67,13 +65,13 @@
     private async Task RemoveSection()
     {
         await BudgetRepository.RemoveSection(SectionData.Id);
-        await OnUpdateSection.InvokeAsync();
+        await OnUpdate.InvokeAsync();
     }
 
     private async Task UpdateBudgetItems()
     {
         items = await FetchBudgetItems();
-        await OnUpdateAll.InvokeAsync();
+        await OnUpdate.InvokeAsync();
     }
 
     private async Task<IEnumerable<Models.Budget>> FetchBudgetItems()

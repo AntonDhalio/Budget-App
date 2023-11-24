@@ -1,18 +1,14 @@
 @page "/"
 @inject Data.BudgetRepository BudgetRepository
 
-<div>
-    <div class="page-title">
-        <h1>Budget</h1>
-    </div>
-
+<div >
     @if (sections.Any())
     {
         <BudgetSummary Sections="@sections" BudgetItems="@items" IncomeItems="@incomeItems" ExpenseItems="@expenseItems"/>
         foreach(var section in sections)
         {
             <div class="section-item">
-                <Section SectionData="section" OnUpdateSection="UpdateSection" OnUpdateAll="UpdateAll"/>
+                <Section SectionData="section" OnUpdate="UpdateSection"/>
             </div>
         }
     }
@@ -31,24 +27,31 @@
 
     protected override async Task OnInitializedAsync()
     {
-        sections = await FetchSections();
-        items = await FetchBudgetItems();
-        incomeItems = await FetchBudgetIncome();
-        expenseItems = await FetchBudgetExpenses();
+        await LoadData();
     }
 
     private async Task UpdateSection()
     {
-        sections = await FetchSections();
-        StateHasChanged();
+        await LoadData();
     }
 
-    private async Task UpdateAll(){
-        sections = await FetchSections();
-        items = await FetchBudgetItems();
-        incomeItems = await FetchBudgetIncome();
-        expenseItems = await FetchBudgetExpenses();
-        StateHasChanged();
+    private async Task LoadData()
+    {
+        try
+        {
+            sections = await FetchSections();
+            items = await FetchBudgetItems();
+            incomeItems = await FetchBudgetIncome();
+            expenseItems = await FetchBudgetExpenses();
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"An error occurred: {ex.Message}");
+        }
+        finally
+        {
+            StateHasChanged();
+        }
     }
 
     private async Task<IEnumerable<Models.Section>> FetchSections()

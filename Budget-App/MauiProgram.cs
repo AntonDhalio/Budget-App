@@ -23,7 +23,6 @@ namespace Budget_App
 		builder.Logging.AddDebug();
 #endif
             builder.Services.AddSingleton<BudgetRepository>();
-            builder.Services.AddIgniteUIBlazor(typeof(IgbCircularProgressModule));
             builder.Services.AddIgniteUIBlazor(typeof(IgbRadialGaugeModule));
 
             return builder.Build();

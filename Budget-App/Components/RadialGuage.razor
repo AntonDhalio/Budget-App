@@ -3,7 +3,7 @@
     <IgbRadialGauge
                     Height="100%" Width="100%"
                     MinimumValue=0
-                    MaximumValue=totalIncome
+                    MaximumValue=maximumValue
 
                     ScaleStartAngle=120
                     ScaleEndAngle=60
@@ -59,7 +59,7 @@
     public IEnumerable<Budget> SectionItems { get; set; }
     private System.Collections.ObjectModel.ObservableCollection<GaugeRangeInfo> RangeInfo = new System.Collections.ObjectModel.ObservableCollection<GaugeRangeInfo>();
     private int currentEndValue { get; set; } = 0;
-    private int totalIncome { get; set; }
+    private int maximumValue { get; set; }
     private bool isInitializing = false;
     private SemaphoreSlim semaphore = new SemaphoreSlim(1, 1);
 
@@ -84,34 +84,25 @@
                 isInitializing = true;
                 RangeInfo.Clear();
                 currentEndValue = 0;
-                totalIncome = IncomeData.Sum(x => x.Amount);
+                maximumValue = CalculateRemainingIncome() >= 0 ? IncomeData.Where(x => x.IsActive == true).Sum(x => x.Amount) : ExpenseData.Where(x => x.IsActive == true).Sum(x => (x.Amount * x.SharedPercentage / 100));
 
                 foreach (var section in SectionData)
                 {
                     SectionItems = await BudgetRepository.GetBudgetItemsBySection(section.Id);
-                    int income = SectionItems.Where(x => x.Type == "Income" && x.IsActive == true).Sum(x => x.Amount);
-                    int expenses = SectionItems.Where(x => x.Type == "Expense" && x.IsActive == true).Sum(x => (x.Amount * x.SharedPercentage / 100));
-                    int total = income - expenses;
-                    if (total > 0)
-                    {
-                        total = 0;
-                    }
-                    else
-                    {
-                        total = Math.Abs(total);
-                    }
+                    int expenses = SectionItems.Where(x => x.Type == "Expense" && x.IsActive == true).Sum(x => (x.Amount * x.SharedPercentage / 100));               
+                    expenses = Math.Abs(expenses);                    
                     GaugeRangeInfo range = new GaugeRangeInfo()
                         {
                             Brush = section.SectionColor,
                             Outline = "black",
                             StartValue = currentEndValue,
-                            EndValue = currentEndValue + total,
+                            EndValue = currentEndValue + expenses,
                             InnerStartExtent = 0.3,
                             InnerEndExtent = 0.3,
                             OuterStartExtent = 0.7,
                             OuterEndExtent = 0.7
                         };
-                    currentEndValue += total;
+                    currentEndValue += expenses;
                     RangeInfo.Add(range);
                 }
                 int positives = CalculateRemainingIncome();

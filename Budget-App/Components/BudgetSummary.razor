@@ -4,14 +4,7 @@
     </div>
     <div class="summary-body">
         <div class="radial-guage">
-            @if (dataIsLoaded)
-            {
-                <RadialGuage SectionData="Sections" IncomeData="IncomeItems" ExpenseData="ExpenseItems" />
-            }
-            else
-            {
-                <p>Loading...</p>
-            }
+             <RadialGuage SectionData="Sections" IncomeData="IncomeItems" ExpenseData="ExpenseItems" />
         </div>
     @foreach (var section in Sections)
     {
@@ -51,13 +44,6 @@
     public IEnumerable<Models.Budget> IncomeItems { get; set;}
     [Parameter]
     public IEnumerable<Models.Budget> ExpenseItems { get; set;}
-
-    private bool dataIsLoaded = false;
-
-    protected override async Task OnInitializedAsync()
-    {
-        dataIsLoaded = true;
-    }
 
     private int CalculateRemainingIncome()
     {
